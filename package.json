@@ -1,9 +1,9 @@
 {
   "name": "@kot-shrodingera-team/germes-utils",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "devDependencies": {
     "@kot-shrodingera-team/prettier-config-germes": "^1.0.0",
-    "@kot-shrodingera-team/eslint-config-germes": "^1.0.2",
+    "@kot-shrodingera-team/eslint-config-germes": "^1.0.3",
     "@kot-shrodingera-team/typescript-config-germes": "^1.0.1",
     "@kot-shrodingera-team/worker-declaration": "^1.0.2",
     "@typescript-eslint/eslint-plugin": "^3.8.0",
