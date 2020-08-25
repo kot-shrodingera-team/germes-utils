@@ -185,13 +185,26 @@ export const log = (message: string, color = 'white'): void => {
   const timestamp = `[${dateTime.getHours()}:${dateTime.getMinutes()}:${dateTime.getSeconds()}.${dateTime.getMilliseconds()}]`;
   const string = `%c${timestamp}: %c${message}`;
   /* eslint-disable no-console */
-  console.groupCollapsed(
-    string,
-    'font-weight: bold; color: blue',
-    `color: ${color}; background: #252525; padding: 0 5px`
-  );
-  console.trace();
-  console.groupEnd();
+  if (console.groupCollapsed && console.groupEnd) {
+    console.groupCollapsed(
+      string,
+      'font-weight: bold; color: blue',
+      `color: ${color}; background: #252525; padding: 0 5px`
+    );
+    if (console.trace) {
+      console.trace();
+    }
+    console.groupEnd();
+  } else {
+    console.log(
+      string,
+      'font-weight: bold; color: blue',
+      `color: ${color}; background: #252525; padding: 0 5px`
+    );
+    if (console.trace) {
+      console.trace();
+    }
+  }
   /* eslint-enable no-console */
 };
 
@@ -238,4 +251,21 @@ export const getPhoneCountry = (): string => {
     return 'Албания';
   }
   return null;
+};
+
+export const killEventListener = (
+  eventType: string,
+  context: Window | Document | Element = window
+): void => {
+  context.addEventListener(
+    eventType,
+    (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    },
+    {
+      capture: true,
+      passive: false,
+    }
+  );
 };
