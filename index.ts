@@ -61,6 +61,13 @@ export const awaiter = async <T, S = null, U = null>(
 
 export const domLoaded = (): Promise<void> =>
   new Promise((resolve) => {
+    if (
+      document.readyState === 'complete' ||
+      document.readyState === 'interactive'
+    ) {
+      resolve();
+      return;
+    }
     document.addEventListener('DOMContentLoaded', () => resolve(), {
       once: true,
     });
