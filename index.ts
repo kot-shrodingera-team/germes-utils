@@ -73,6 +73,17 @@ export const domLoaded = (): Promise<void> =>
     });
   });
 
+export const domFullLoaded = (): Promise<void> =>
+  new Promise((resolve) => {
+    if (document.readyState === 'complete') {
+      resolve();
+      return;
+    }
+    window.addEventListener('load', () => resolve(), {
+      once: true,
+    });
+  });
+
 export const sleep = (msec: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, msec));
 
