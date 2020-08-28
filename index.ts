@@ -290,12 +290,17 @@ export const killEventListener = (
 
 export const nativeInput = (
   inputElement: HTMLInputElement,
-  text: string
+  text: string,
+  type: 'KeyDown' | 'KeyPress' = 'KeyDown'
 ): void => {
   [...text].forEach((char) => {
     if (inputElement !== window.document.activeElement) {
       inputElement.focus();
     }
-    Api.DomEventsHelper.KeyPress(char.charCodeAt(0));
+    if (type === 'KeyDown') {
+      Api.DomEventsHelper.KeyDown(char.charCodeAt(0));
+    } else {
+      Api.DomEventsHelper.KeyPress(char.charCodeAt(0));
+    }
   });
 };
