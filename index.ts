@@ -269,3 +269,15 @@ export const killEventListener = (
     }
   );
 };
+
+export const nativeInput = (
+  inputElement: HTMLInputElement,
+  text: string
+): void => {
+  [...text].forEach((char) => {
+    if (inputElement !== window.document.activeElement) {
+      inputElement.focus();
+    }
+    Api.DomEventsHelper.KeyPress(char.charCodeAt(0));
+  });
+};
