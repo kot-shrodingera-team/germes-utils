@@ -293,14 +293,27 @@ export const nativeInput = (
   text: string,
   type: 'KeyDown' | 'KeyPress' = 'KeyDown'
 ): void => {
+  const keyFunction =
+    type === 'KeyDown'
+      ? Api.DomEventsHelper.KeyDown
+      : Api.DomEventsHelper.KeyPress;
+  while (inputElement.value) {
+    const oldValue = inputElement.value;
+    keyFunction(8);
+    const newValue = inputElement.value;
+    if (!newValue) {
+      break;
+    } else if (oldValue === newValue) {
+      log(
+        `Ошибка нативного ввода: Не удалось очистить поле ввода. Значение не изменилось (${newValue})`
+      );
+      return;
+    }
+  }
   [...text].forEach((char) => {
     if (inputElement !== window.document.activeElement) {
       inputElement.focus();
     }
-    if (type === 'KeyDown') {
-      Api.DomEventsHelper.KeyDown(char.charCodeAt(0));
-    } else {
-      Api.DomEventsHelper.KeyPress(char.charCodeAt(0));
-    }
+    keyFunction(char.charCodeAt(0));
   });
 };
