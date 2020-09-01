@@ -314,6 +314,16 @@ export const nativeInput = (
     if (inputElement !== window.document.activeElement) {
       inputElement.focus();
     }
-    keyFunction(char.charCodeAt(0));
+    const charCode = (() => {
+      switch (char) {
+        case '.':
+          return 190;
+        case ',':
+          return 188;
+        default:
+          return char.charCodeAt(0);
+      }
+    })();
+    keyFunction(charCode);
   });
 };
