@@ -228,7 +228,7 @@ export const log = (message: string, color = 'white'): void => {
 
 export const stakeInfoString = (): string => {
   return (
-    `Событие: ${worker.EventTeams}\n` +
+    `Событие: ${worker.TeamOne} vs ${worker.TeamTwo}\n` +
     `Ставка: ${worker.BetName}\n` +
     `Сумма: ${worker.StakeInfo.Summ}\n` +
     `Коэффициент: ${worker.StakeInfo.Coef}`
