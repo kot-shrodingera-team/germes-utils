@@ -335,3 +335,6 @@ export const timeString = (time: Date): string => {
   const miliseconds = String(time.getMilliseconds()).padStart(3, '0');
   return `${hours}:${minutes}:${seconds}.${miliseconds}`;
 };
+
+export const round = (value: number, precision = 2): number =>
+  Number(value.toFixed(precision));
