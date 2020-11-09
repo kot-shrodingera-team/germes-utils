@@ -26,7 +26,7 @@ class GermesRequest {
     if (!this.subscribes[url]) {
       this.subscribes[url] = [];
     }
-    if (worker.Api.Request.AddRequestResponseHandler(url)) {
+    if (worker.Api.Rqst.AddRequestResponseHandler(url)) {
       this.subscribes[url].push(callback);
     } else {
       log(`Не удалось подписаться на url: "${url}"`, 'red');
@@ -45,7 +45,7 @@ class GermesRequest {
 
   clearAllRequestResponseSubscribes(): void {
     this.subscribes = {};
-    worker.Api.Request.ClearAllRequestResponseSubscribes();
+    worker.Api.Rqst.ClearAllRequestResponseSubscribes();
   }
 }
 
