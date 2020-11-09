@@ -190,7 +190,10 @@ const getRgbFromColorName = (color: string): RGB => {
   return [255, 255, 255];
 };
 
-export const log = (message: string, color = 'white'): void => {
+export const log = (message: string, color = 'white', dev = false): void => {
+  if (dev && !worker.Dev) {
+    return;
+  }
   if (minVersion('0.1.814.4')) {
     worker.Helper.WriteLineRGB(message, ...getRgbFromColorName(color));
   } else {
