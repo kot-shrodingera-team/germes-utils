@@ -202,28 +202,27 @@ export const log = (message: string, color = 'white', dev = false): void => {
   const dateTime = new Date();
   const timestamp = `[${dateTime.getHours()}:${dateTime.getMinutes()}:${dateTime.getSeconds()}.${dateTime.getMilliseconds()}]`;
   const string = `%c${timestamp}: %c${message}`;
-  /* eslint-disable no-console */
-  if (console.groupCollapsed && console.groupEnd) {
-    console.groupCollapsed(
+  const consoleObject = window.consoleCopy ? window.consoleCopy : console;
+  if (consoleObject.groupCollapsed && consoleObject.groupEnd) {
+    consoleObject.groupCollapsed(
       string,
       'font-weight: bold; color: blue',
       `color: ${color}; background: #252525; padding: 0 5px`
     );
-    if (console.trace) {
-      console.trace();
+    if (consoleObject.trace) {
+      consoleObject.trace();
     }
-    console.groupEnd();
+    consoleObject.groupEnd();
   } else {
-    console.log(
+    consoleObject.log(
       string,
       'font-weight: bold; color: blue',
       `color: ${color}; background: #252525; padding: 0 5px`
     );
-    if (console.trace) {
-      console.trace();
+    if (consoleObject.trace) {
+      consoleObject.trace();
     }
   }
-  /* eslint-enable no-console */
 };
 
 export const stakeInfoString = (): string => {
