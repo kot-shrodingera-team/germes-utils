@@ -337,3 +337,18 @@ export const timeString = (time: Date): string => {
 
 export const round = (value: number, precision = 2): number =>
   Number(value.toFixed(precision));
+
+export const getWorkerParameter = (key: string): unknown => {
+  if (!minVersion('0.1.818.0')) {
+    return null;
+  }
+  try {
+    const workerParameters = JSON.parse(worker.WorkerParameters);
+    if (!(key in workerParameters)) {
+      return null;
+    }
+    return workerParameters[key];
+  } catch (e) {
+    return null;
+  }
+};
