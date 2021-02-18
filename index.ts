@@ -234,38 +234,111 @@ export const stakeInfoString = (): string => {
   );
 };
 
-export const getPhoneCountry = (): string => {
-  const russianPhoneRegex = /(?:\+?7)?9(?!40)\d{9}/;
-  const ukrainianPhoneRegex = /\+?380\d{9}/;
-  const kazakhstanianPhoneRegex = /(?:\+?7)?7\d{9}/;
-  const belarusianPhoneRegex = /\+?375\d{9}/;
-  const azerbaijanianPhoneRegex = /\+?994\d{9}/;
-  const abkhazianPhoneRegex = /(?:\+?7)?940\d{7}/;
-  const albanianPhoneRegex = /\+?355\d{9}/;
-  const moldavianPhoneRegex = /\+?373\d{8}/;
-  if (belarusianPhoneRegex.test(worker.Login)) {
-    return 'Беларусь';
-  }
-  if (russianPhoneRegex.test(worker.Login)) {
-    return 'Россия';
-  }
-  if (ukrainianPhoneRegex.test(worker.Login)) {
-    return 'Украина';
-  }
-  if (kazakhstanianPhoneRegex.test(worker.Login)) {
-    return 'Казахстан';
-  }
-  if (moldavianPhoneRegex.test(worker.Login)) {
-    return 'Молдавия';
-  }
-  if (abkhazianPhoneRegex.test(worker.Login)) {
-    return 'Абхазия';
-  }
-  if (azerbaijanianPhoneRegex.test(worker.Login)) {
-    return 'Азейбарджан';
-  }
-  if (albanianPhoneRegex.test(worker.Login)) {
-    return 'Албания';
+export const getPhoneLoginData = (): {
+  country: string;
+  alphaCode: string;
+  callingCode: string;
+  nsn: number;
+} => {
+  // cc - Calling Code
+  // nsn - National Significant Number
+  const regexes = [
+    {
+      country: 'Россия',
+      alphaCode: 'RU',
+      callingCode: '+7',
+      regex: /^(?:\+?7)?(?<nsn>9(?!40)\d{9})$/,
+    },
+    {
+      country: 'Украина',
+      alphaCode: 'UA',
+      callingCode: '+380',
+      regex: /^\+?380(?<nsn>\d{9})$/,
+    },
+    {
+      country: 'Казахстан',
+      alphaCode: 'KZ',
+      callingCode: '+7',
+      regex: /^(?:\+?7)?(?<nsn>7\d{9})$/,
+    },
+    {
+      country: 'Беларусь',
+      alphaCode: 'BY',
+      callingCode: '+375',
+      regex: /^\+?375(?<nsn>\d{9})$/,
+    },
+    {
+      country: 'Азейбарджан',
+      alphaCode: 'AZ',
+      callingCode: '+994',
+      regex: /^\+?994(?<nsn>\d{9})$/,
+    },
+    {
+      country: 'Абхазия',
+      alphaCode: 'GE-AB',
+      callingCode: '+7',
+      regex: /^(?:\+?7)?(?<nsn>940\d{7})$/,
+    },
+    {
+      country: 'Грузия',
+      alphaCode: 'GE',
+      callingCode: '+995',
+      regex: /^\+?995(?<nsn>\d{9})$/,
+    },
+    {
+      country: 'Албания',
+      alphaCode: 'AL',
+      callingCode: '+355',
+      regex: /^\+?355(?<nsn>\d{9})$/,
+    },
+    {
+      country: 'Молдова',
+      alphaCode: 'MD',
+      callingCode: '+373',
+      regex: /^\+?373(?<nsn>\d{8})$/,
+    },
+    {
+      country: 'Армения',
+      alphaCode: 'AM',
+      callingCode: '+374',
+      regex: /^\+?374(?<nsn>\d{6})$/,
+    },
+    {
+      country: 'Таджикистан',
+      alphaCode: 'TJ',
+      callingCode: '+992',
+      regex: /^\+?992(?<nsn>\d{9})$/,
+    },
+    {
+      country: 'Туркменистан',
+      alphaCode: 'TM',
+      callingCode: '+993',
+      regex: /^\+?993(?<nsn>\d{9})$/,
+    },
+    {
+      country: 'Узбекистан',
+      alphaCode: 'UZ',
+      callingCode: '+998',
+      regex: /^\+?998(?<nsn>\d{9})$/,
+    },
+    {
+      country: undefined,
+      alphaCode: undefined,
+      callingCode: undefined,
+      regex: /^\+\d{11,13}$/,
+    },
+  ];
+  // eslint-disable-next-line no-restricted-syntax
+  for (const { country, alphaCode, callingCode, regex } of regexes) {
+    const match = worker.Login.match(regex);
+    if (match) {
+      return {
+        country,
+        alphaCode,
+        callingCode,
+        nsn: Number(match.groups.nsn),
+      };
+    }
   }
   return null;
 };
