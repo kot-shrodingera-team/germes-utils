@@ -200,7 +200,11 @@ export const log = (message: string, color = 'white', dev = false): void => {
     worker.Helper.WriteLine(message);
   }
   const dateTime = new Date();
-  const timestamp = `[${dateTime.getHours()}:${dateTime.getMinutes()}:${dateTime.getSeconds()}.${dateTime.getMilliseconds()}]`;
+  const hours = String(dateTime.getHours()).padStart(2, '0');
+  const minutes = String(dateTime.getMinutes()).padStart(2, '0');
+  const seconds = String(dateTime.getSeconds()).padStart(2, '0');
+  const milliseconds = String(dateTime.getMilliseconds()).padStart(3, '0');
+  const timestamp = `[${hours}:${minutes}:${seconds}.${milliseconds}]`;
   const string = `%c${timestamp}: %c${message}`;
   const consoleObject = window.consoleCopy ? window.consoleCopy : console;
   if (consoleObject.groupCollapsed && consoleObject.groupEnd) {
