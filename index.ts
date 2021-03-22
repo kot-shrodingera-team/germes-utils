@@ -1,10 +1,10 @@
-export const getElement = async (
+export const getElement = async <E extends Element = Element>(
   selector: string,
   rejectTime = 5000,
   context: Document | Element = document
-): Promise<Element> => {
+): Promise<E> => {
   return new Promise((resolve /* , reject */) => {
-    let element = context.querySelector(selector);
+    let element = context.querySelector<E>(selector);
     if (element) {
       resolve(element);
       return;
