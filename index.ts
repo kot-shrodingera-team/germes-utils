@@ -1,3 +1,5 @@
+import { JsFailError } from './errors';
+
 export const getElement = async <E extends Element = Element>(
   selector: string,
   rejectTime = 5000,
@@ -427,5 +429,34 @@ export const getWorkerParameter = (key: string): unknown => {
     return workerParameters[key];
   } catch (e) {
     return null;
+  }
+};
+
+export const repeatingOpenBet = async (
+  openingAction: () => Promise<unknown>,
+  getStakeCount: () => number,
+  maxTryCount = 5,
+  betAddedCheckTimout = 1000,
+  betAddedCheckInterval = 50
+): Promise<void> => {
+  for (let i = 1; i <= maxTryCount; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    await openingAction();
+    // eslint-disable-next-line no-await-in-loop
+    const betAdded = await awaiter(
+      () => getStakeCount() === 1,
+      betAddedCheckTimout,
+      betAddedCheckInterval
+    );
+
+    if (!betAdded) {
+      if (i === maxTryCount) {
+        throw new JsFailError('Ставка так и не попала в купон');
+      }
+      log(`Ставка не попала в купон (попытка ${i})`, 'steelblue');
+    } else {
+      log('Ставка попала в купон', 'steelblue');
+      break;
+    }
   }
 };
