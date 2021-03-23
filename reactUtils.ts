@@ -1,8 +1,9 @@
+import { fireEvent } from '.';
+
 const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
   HTMLInputElement.prototype,
   'value'
 ).set;
-const inputEvent = new Event('input', { bubbles: true });
 
 export const setReactInputValue = (
   element: Element,
@@ -10,7 +11,7 @@ export const setReactInputValue = (
 ): void => {
   if (element) {
     nativeInputValueSetter.call(element, value);
-    element.dispatchEvent(inputEvent);
+    fireEvent(element, 'input');
   }
   // const lastValue = element.value;
   // element.value = value;
