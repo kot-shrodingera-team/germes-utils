@@ -36,8 +36,8 @@ export const getElement = async <E extends Element = Element>(
 
 export const awaiter = async <T, S = null, U = null>(
   condition: () => T,
-  timeout = 3000,
-  interval = 4,
+  timeout = 5000,
+  interval = 50,
   truthyValue: S = null,
   falsyValue: U = null
 ): Promise<T | S | U> => {
