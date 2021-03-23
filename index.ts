@@ -89,14 +89,14 @@ export const domFullLoaded = (): Promise<void> =>
 export const sleep = (msec: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, msec));
 
-interface AnyEventInit extends EventInit {
-  [key: string]: unknown;
-}
+// interface AnyEventInit extends EventInit {
+//   [key: string]: unknown;
+// }
 
 export const fireEvent = (
   element: Element,
   eventName: string,
-  EventClass: new (type: string, eventInitDict?: AnyEventInit) => Event = Event
+  EventClass: new (type: string, eventInitDict?: EventInit) => Event = Event
 ): void => {
   const event = new EventClass(eventName, { bubbles: true });
   element.dispatchEvent(event);
