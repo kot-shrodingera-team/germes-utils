@@ -1,5 +1,12 @@
 import { JsFailError } from './errors';
 
+/**
+ * Promise, который резолвится, когда появляется нужный элемент в DOM, используется MutationObserver
+ * @param selector Селектор, используемый в функции querySelector
+ * @param rejectTime Таймаут в мс, если 0, то таймаута нет, по умолчанию 5000
+ * @param context Котекст для выполнения метода querySelector и на который вешается MutationObserver, по умолчанию document
+ * @returns Если элемент найден, он и возвращается, иначе null
+ */
 export const getElement = async <E extends Element = Element>(
   selector: string,
   rejectTime = 5000,
@@ -34,6 +41,16 @@ export const getElement = async <E extends Element = Element>(
   });
 };
 
+/**
+ * Promise, который повторяет колбэк и резолвится, когда значение колбэка truthy
+ * @param condition Колбэк, который выполняется
+ * @param timeout Таймаут повторения колбэков в мс, по умолчанию 5000
+ * @param interval Интервал повторения колбэков, по умолчанию 50
+ * @param truthyValue Возвращаемое значение, если колбэк вернул truthy результат, если этот параметр null, то возвращаемое значение равно результату колбэка, по умолчанию null
+ * @param falsyValue Возвращаемое значение, если колбэк не вернул truthy результат за заданное время, по умолчанию null
+ * @returns Если результат колбэка стал truthy за заданное время, и аргумент truthyValue равен null, то он (результат колбэка) и возвращается.
+ * Если же результат колбэка так и не стал truthy за заданное время, то возвращается falsyValue
+ */
 export const awaiter = async <T, S = null, U = null>(
   condition: () => T,
   timeout = 5000,
@@ -61,6 +78,9 @@ export const awaiter = async <T, S = null, U = null>(
   });
 };
 
+/**
+ * Promise, который резолвится когда DOM загружен (complete или interactive)
+ */
 export const domLoaded = (): Promise<void> =>
   new Promise((resolve) => {
     if (
@@ -75,6 +95,9 @@ export const domLoaded = (): Promise<void> =>
     });
   });
 
+/**
+ * Promise, который резолвится когда DOM полностью загружен (complete)
+ */
 export const domFullLoaded = (): Promise<void> =>
   new Promise((resolve) => {
     if (document.readyState === 'complete') {
@@ -86,6 +109,10 @@ export const domFullLoaded = (): Promise<void> =>
     });
   });
 
+/**
+ * Promise, который резолвится через время, то есть ожидание
+ * @param msec Время ожидания в мс
+ */
 export const sleep = (msec: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, msec));
 
@@ -93,6 +120,12 @@ export const sleep = (msec: number): Promise<void> =>
 //   [key: string]: unknown;
 // }
 
+/**
+ * Инициализация события для элемента DOM
+ * @param element Элемент DOM, который является target для события
+ * @param eventName Имя события
+ * @param EventClass Класс события, по умолчанию Event
+ */
 export const fireEvent = (
   element: Element,
   eventName: string,
@@ -102,16 +135,51 @@ export const fireEvent = (
   element.dispatchEvent(event);
 };
 
+/**
+ * Регистронезависимое сравнение двух строк, не учитывая акценты и другие диакртические знаки
+ * @param left Левая строка
+ * @param right Правая строка
+ * @returns Если строки равны, возвращается true, иначе false
+ */
 export const caseInsensitiveCompare = (left: string, right: string): boolean =>
   left.localeCompare(right, 'en', { sensitivity: 'base' }) === 0;
 
+/**
+ * Слэш-экранирование символов, имеющих особое значение в регулярных выражениях .*+-?^${}()|[]\
+ * @param string Исходная строка
+ * @returns Строка с экранированными символами
+ */
 export const escapeRegex = (string: string): string => {
   return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
 };
 
+/**
+ * Удаление диактрических знаков из строка
+ * @param string Исходная строка
+ * @returns Строка без диактрических знаков
+ */
 export const normalizeDiactric = (string: string): string =>
   string.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
+/* eslint-disable prettier/prettier */
+/**
+ * Тэговая функция шаблонных литералов, генерирующая регистронезависимое регулярное выражение по следующему алгоритму:  
+ * Массив строковых значения остаётся как есть, в raw формате  
+ * Подстановки обрабатываются в зависимости от типа  
+ * Если это регулярное выражение, тогда подставляется свойство source  
+ * Иначе (если строка), подставляется эта же строка, но с экранированными символами  
+ * Пример
+ * ```
+ * parameterRegex = /(\d(?:\.\d+))+/
+ * teamName = 'Kraft.VK (Milan)'
+ * handicapRegex = ri`Handicap (${teamName}) \[${parameterRegex}\]`
+ * handicapRegex.source === /Handicap (Kraft\.VK \(Milan\)) \[(\d(?:\.\d+))+\]/i.source //true
+ * ```
+ * @param strings
+ * @param args
+ * @returns Сгенерированное регулярное выражение
+ */
+/* eslint-enable prettier/prettier */
 export const ri = (
   strings: TemplateStringsArray,
   ...args: Array<string | RegExp>
@@ -130,6 +198,11 @@ export const ri = (
   return new RegExp(result, 'i');
 };
 
+/**
+ * Проверка версии бота
+ * @param version Версия бота, относительно которой проверяем
+ * @returns Если версия равна или новее той, относительно которой проверяем, возвращается true, иначе false
+ */
 export const minVersion = (version: string): boolean => {
   const stripZerosRegex = /(\.0+)+$/;
   const botSegments = worker.BotVer.replace(stripZerosRegex, '').split('.');
@@ -151,6 +224,11 @@ export const minVersion = (version: string): boolean => {
   return true;
 };
 
+/**
+ * Проверка соответствия текущего открытого хоста указанному хосту бк в настройках бота,
+ * www. вначале хостов не учитываются, проверяется только то, что текущий хост оканчивается хостом в настройках, потому что по факту могут быть добавлены поддомены
+ * @returns Если хост соответствует, возвращается true, иначе false
+ */
 export const checkBookerHost = (): boolean => {
   const bookmakerHost = new URL(worker.BookmakerMainUrl).host.replace(
     /^www\./,
@@ -159,6 +237,11 @@ export const checkBookerHost = (): boolean => {
   return window.location.host.replace(/^www\./, '').endsWith(bookmakerHost);
 };
 
+/**
+ * Формирование FormData из объекта
+ * @param data Исходный объект
+ * @returns Итоговый экземпляр FormData
+ */
 export const toFormData = (data: Record<string, string>): FormData => {
   const formData = new FormData();
   Object.entries(data).forEach(([key, value]) => {
@@ -169,6 +252,12 @@ export const toFormData = (data: Record<string, string>): FormData => {
 
 export const parameterRegex = /[+-]?\d+(?:\.\d+)?/;
 
+/**
+ * Формирование параметра точного счёта
+ * @param leftScore Левый счёт
+ * @param rightScore Правый счёт
+ * @returns Итоговый параметр
+ */
 export const correctScoreParameter = (
   leftScore: number,
   rightScore: number
@@ -179,6 +268,11 @@ export const correctScoreParameter = (
 
 type RGB = [number, number, number];
 
+/**
+ * Формирование RGB значений из текстового названия цвета
+ * @param color CSS-цвет в текстовом формате
+ * @returns Массив из трёх RGB значений
+ */
 const getRgbFromColorName = (color: string): RGB => {
   const ctx = document.createElement('canvas').getContext('2d');
   ctx.fillStyle = color;
@@ -195,6 +289,11 @@ const getRgbFromColorName = (color: string): RGB => {
   return [255, 255, 255];
 };
 
+/**
+ * Вывод в
+ * @param time
+ * @returns
+ */
 export const timeString = (time: Date): string => {
   const hours = String(time.getHours()).padStart(2, '0');
   const minutes = String(time.getMinutes()).padStart(2, '0');
@@ -202,6 +301,13 @@ export const timeString = (time: Date): string => {
   const miliseconds = String(time.getMilliseconds()).padStart(3, '0');
   return `${hours}:${minutes}:${seconds}.${miliseconds}`;
 };
+
+/**
+ * Вывод сообщения в лог бк в боте и в консоль браузера
+ * @param message Текст сообщения
+ * @param color Цвет текста, по умолчанию белый
+ * @param dev Выводить сообщение только при включённом Dev режиме бота, по умолчанию false
+ */
 export const log = (message: string, color = 'white', dev = false): void => {
   if (dev && !worker.Dev) {
     return;
@@ -236,6 +342,10 @@ export const log = (message: string, color = 'white', dev = false): void => {
   }
 };
 
+/**
+ * Формарование строки с информацией о ставке (событие, роспись, сумма, коэффициент)
+ * @returns Итоговая строка
+ */
 export const stakeInfoString = (): string => {
   return (
     `Событие: ${worker.TeamOne} vs ${worker.TeamTwo}\n` +
@@ -245,6 +355,17 @@ export const stakeInfoString = (): string => {
   );
 };
 
+// https://en.wikipedia.org/wiki/List_of_mobile_telephone_prefixes_by_country
+/**
+ * Формирование данных номере телефона в поле логина
+ * @returns Если логин определяется как номер телефона, то возвращается объекст со следующими полями:
+ * - country - Страна в тектовом формате на русском языке
+ * - alphaCode - Alpha-2 код страны в соответствии со стандартом ISO 3166-1
+ * - callingCode - Телефонный код страны
+ * - nsn - Значимая часть номера телефона (National Significant Number)
+ *
+ * Если логин не определяется нором как номер телефона, возвращается null
+ */
 export const getPhoneLoginData = (): {
   country: string;
   alphaCode: string;
@@ -354,6 +475,11 @@ export const getPhoneLoginData = (): {
   return null;
 };
 
+/**
+ * Удаление eventListener'ов с объекта
+ * @param eventType Тип события
+ * @param context Целевой объект, по умолчанию window
+ */
 export const killEventListener = (
   eventType: string,
   context: Window | Document | Element = window
@@ -371,6 +497,12 @@ export const killEventListener = (
   );
 };
 
+/**
+ * "Нативный" ввод, используя методы нажатия клавиш клавиатуры
+ * @param inputElement Целевой элемент
+ * @param text Текст для ввода
+ * @param type Тип события нажатия на клавишу (KeyDown или KeyPress), по умолчанию KeyDown
+ */
 export const nativeInput = (
   inputElement: HTMLInputElement,
   text: string,
@@ -411,9 +543,20 @@ export const nativeInput = (
   });
 };
 
+/**
+ * Округление числа
+ * @param value Исходное число
+ * @param precision Точность, максмальное количество знаков после запятой
+ * @returns Округлённое число
+ */
 export const round = (value: number, precision = 2): number =>
   Number(value.toFixed(precision));
 
+/**
+ * Значение поля из параметров Worker в настройках бк в боте
+ * @param key Название поля
+ * @returns Если есть данное поле, возвращается его значение, иначе null
+ */
 export const getWorkerParameter = (key: string): unknown => {
   if (!minVersion('0.1.818.0')) {
     return null;
@@ -429,6 +572,14 @@ export const getWorkerParameter = (key: string): unknown => {
   }
 };
 
+/**
+ * Повторение попытки открытия ставки
+ * @param openingAction Функция открытия ставки
+ * @param getStakeCount Функция определения количества ставок в купоне
+ * @param maxTryCount Максимальное количество попыток, по умолчанию 5
+ * @param betAddedCheckTimeout Таймаут проверки попадания ставки в купон, по умолчанию 1000
+ * @param betAddedCheckInterval Интервал между проверками попадания ставки в купон, по умолчанию 50
+ */
 export const repeatingOpenBet = async (
   openingAction: () => Promise<unknown>,
   getStakeCount: () => number,

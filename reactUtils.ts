@@ -5,6 +5,11 @@ const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
   'value'
 ).set;
 
+/**
+ * Ввод данных в React-элемент
+ * @param element целевой элемент
+ * @param value Вводимое значение
+ */
 export const setReactInputValue = (
   element: Element,
   value: string | number
@@ -21,6 +26,12 @@ export const setReactInputValue = (
   // }
   // element.dispatchEvent(inputEvent);
 };
+
+/**
+ * Получение reactInternalInstance элемента
+ * @param element целевой элемент
+ * @returns reactInternalInstance
+ */
 export const getReactInstance = (element: Element): unknown => {
   if (element) {
     return ((element as unknown) as Record<string, unknown>)[
@@ -31,6 +42,12 @@ export const getReactInstance = (element: Element): unknown => {
   }
   return null;
 };
+
+/**
+ * Получение reactEventHandlers элемента
+ * @param element целевой элемент
+ * @returns reactEventHandlers
+ */
 export const getReactEventHandlers = (element: Element): unknown => {
   if (element) {
     return ((element as unknown) as Record<string, unknown>)[
