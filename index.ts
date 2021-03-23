@@ -195,6 +195,13 @@ const getRgbFromColorName = (color: string): RGB => {
   return [255, 255, 255];
 };
 
+export const timeString = (time: Date): string => {
+  const hours = String(time.getHours()).padStart(2, '0');
+  const minutes = String(time.getMinutes()).padStart(2, '0');
+  const seconds = String(time.getSeconds()).padStart(2, '0');
+  const miliseconds = String(time.getMilliseconds()).padStart(3, '0');
+  return `${hours}:${minutes}:${seconds}.${miliseconds}`;
+};
 export const log = (message: string, color = 'white', dev = false): void => {
   if (dev && !worker.Dev) {
     return;
@@ -204,12 +211,7 @@ export const log = (message: string, color = 'white', dev = false): void => {
   } else {
     worker.Helper.WriteLine(message);
   }
-  const dateTime = new Date();
-  const hours = String(dateTime.getHours()).padStart(2, '0');
-  const minutes = String(dateTime.getMinutes()).padStart(2, '0');
-  const seconds = String(dateTime.getSeconds()).padStart(2, '0');
-  const milliseconds = String(dateTime.getMilliseconds()).padStart(3, '0');
-  const timestamp = `[${hours}:${minutes}:${seconds}.${milliseconds}]`;
+  const timestamp = timeString(new Date());
   const string = `%c${timestamp}: %c${message}`;
   const consoleObject = window.consoleCopy ? window.consoleCopy : console;
   if (consoleObject.groupCollapsed && consoleObject.groupEnd) {
@@ -407,14 +409,6 @@ export const nativeInput = (
     })();
     keyFunction(charCode);
   });
-};
-
-export const timeString = (time: Date): string => {
-  const hours = String(time.getHours()).padStart(2, '0');
-  const minutes = String(time.getMinutes()).padStart(2, '0');
-  const seconds = String(time.getSeconds()).padStart(2, '0');
-  const miliseconds = String(time.getMilliseconds()).padStart(3, '0');
-  return `${hours}:${minutes}:${seconds}.${miliseconds}`;
 };
 
 export const round = (value: number, precision = 2): number =>
