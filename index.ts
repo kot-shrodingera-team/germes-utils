@@ -151,9 +151,12 @@ export const minVersion = (version: string): boolean => {
   return true;
 };
 
-export const checkUrl = (): boolean => {
-  const url = new URL(worker.BookmakerMainUrl);
-  return window.location.host.endsWith(url.host.replace(/^www\./, ''));
+export const checkBookerHost = (): boolean => {
+  const bookmakerHost = new URL(worker.BookmakerMainUrl).host.replace(
+    /^www\./,
+    ''
+  );
+  return window.location.host.replace(/^www\./, '').endsWith(bookmakerHost);
 };
 
 export const toFormData = (data: Record<string, string>): FormData => {
