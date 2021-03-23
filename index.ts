@@ -433,7 +433,7 @@ export const repeatingOpenBet = async (
   openingAction: () => Promise<unknown>,
   getStakeCount: () => number,
   maxTryCount = 5,
-  betAddedCheckTimout = 1000,
+  betAddedCheckTimeout = 1000,
   betAddedCheckInterval = 50
 ): Promise<void> => {
   for (let i = 1; i <= maxTryCount; i += 1) {
@@ -442,7 +442,7 @@ export const repeatingOpenBet = async (
     // eslint-disable-next-line no-await-in-loop
     const betAdded = await awaiter(
       () => getStakeCount() === 1,
-      betAddedCheckTimout,
+      betAddedCheckTimeout,
       betAddedCheckInterval
     );
 
