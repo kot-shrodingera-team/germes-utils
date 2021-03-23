@@ -120,7 +120,7 @@ export const ri = (
   let result = rawStrings[0];
   for (let i = 1; i < rawStrings.length; i += 1) {
     let arg = args[i - 1];
-    if (typeof arg === 'object' && 'source' in arg) {
+    if (arg instanceof RegExp) {
       arg = arg.source;
     } else {
       arg = escapeRegex(arg);
