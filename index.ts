@@ -14,7 +14,7 @@ export const getElement = async <E extends Element = Element>(
     const observerConfig = { childList: true, subtree: true, attributes: true };
 
     const mutationObserver = new MutationObserver((mutations, observer) => {
-      element = context.querySelector(selector);
+      element = context.querySelector<E>(selector);
       if (element) {
         resolve(element);
         observer.disconnect();
