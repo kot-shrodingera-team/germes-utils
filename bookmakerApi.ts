@@ -5,6 +5,7 @@ declare global {
       doStakeTime: Date;
       betProcessingStep: string;
       betProcessingAdditionalInfo: string;
+      betProcessingTimeout: number;
     };
   }
 }
