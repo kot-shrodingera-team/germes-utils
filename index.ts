@@ -647,6 +647,14 @@ export const checkCouponLoadingError = async (
   window.germesData.betProcessingStep = 'error';
 };
 
+export const checkCouponLoadingSuccess = (message?: string): void => {
+  if (message !== undefined) {
+    log(message, 'steelblue');
+  }
+
+  window.germesData.betProcessingStep = 'success';
+};
+
 export const getRemainingTimeout = (maximum?: number): number => {
   const result =
     window.germesData.betProcessingTimeout -
