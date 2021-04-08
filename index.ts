@@ -608,3 +608,53 @@ export const repeatingOpenBet = async (
     }
   }
 };
+
+interface CheckCouponLoadingErrorOptions {
+  botMessage?: string;
+  informMessage?: string;
+  reopen?: {
+    openBet: () => Promise<void>;
+  };
+}
+
+export const checkCouponLoadingError = async (
+  options: CheckCouponLoadingErrorOptions
+): Promise<void> => {
+  if (options.botMessage) {
+    log(options.botMessage, 'crimson');
+  }
+
+  if (options.informMessage) {
+    worker.Helper.SendInformedMessage(
+      `В ${window.germesData.bookmakerName} произошла ошибка принятия ставки:\n${options.informMessage}\n`
+    );
+  }
+
+  if (options.reopen) {
+    try {
+      await options.reopen.openBet();
+      log('Ставка успешно переоткрыта', 'green');
+      window.germesData.betProcessingStep = 'reopened';
+    } catch (reopenError) {
+      if (reopenError instanceof JsFailError) {
+        log(reopenError.message, 'red');
+      } else {
+        log(reopenError.message, 'red');
+      }
+    }
+  }
+
+  window.germesData.betProcessingStep = 'error';
+};
+
+export const getRemainingTimeout = (
+  timeout: number,
+  maximum?: number
+): number => {
+  const result =
+    timeout - (new Date().getTime() - window.germesData.doStakeTime.getTime());
+  if (maximum !== undefined && timeout > maximum) {
+    return maximum;
+  }
+  return result;
+};
