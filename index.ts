@@ -647,13 +647,14 @@ export const checkCouponLoadingError = async (
   window.germesData.betProcessingStep = 'error';
 };
 
-export const getRemainingTimeout = (
-  timeout: number,
-  maximum?: number
-): number => {
+export const getRemainingTimeout = (maximum?: number): number => {
   const result =
-    timeout - (new Date().getTime() - window.germesData.doStakeTime.getTime());
-  if (maximum !== undefined && timeout > maximum) {
+    window.germesData.betProcessingTimeout -
+    (new Date().getTime() - window.germesData.doStakeTime.getTime());
+  if (
+    maximum !== undefined &&
+    window.germesData.betProcessingTimeout > maximum
+  ) {
     return maximum;
   }
   return result;
