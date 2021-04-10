@@ -557,18 +557,28 @@ export const round = (value: number, precision = 2): number =>
  * @param key Название поля
  * @returns Если есть данное поле, возвращается его значение, иначе null
  */
-export const getWorkerParameter = (key: string): unknown => {
-  if (!minVersion('0.1.818.0')) {
-    return null;
-  }
+export const getWorkerParameter = <T>(
+  key: string,
+  type: 'string' | 'number' | 'boolean' = 'string'
+): T => {
   try {
     const workerParameters = JSON.parse(worker.WorkerParameters);
-    if (!(key in workerParameters)) {
-      return null;
+    const forkParameters = worker.BetId.startsWith('{')
+      ? JSON.parse(worker.BetId)
+      : {};
+    const parameters = { ...workerParameters, ...forkParameters };
+    if (!(key in parameters)) {
+      return undefined;
     }
-    return workerParameters[key];
+    const value = workerParameters[key];
+    if (typeof value !== type) {
+      log(`Тип параметра ${key} не равен ${type}. Обратитесь в ТП`, 'crimson');
+      return undefined;
+    }
+    return value;
   } catch (e) {
-    return null;
+    log(e.message, 'red');
+    return undefined;
   }
 };
 
