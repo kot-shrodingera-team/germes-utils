@@ -559,7 +559,7 @@ export const round = (value: number, precision = 2): number =>
  */
 export const getWorkerParameter = <T>(
   key: string,
-  type: 'string' | 'number' | 'boolean' = 'string'
+  type: 'string' | 'number' | 'boolean' = 'boolean'
 ): T => {
   try {
     const workerParameters = worker.WorkerParameters.startsWith('{')
