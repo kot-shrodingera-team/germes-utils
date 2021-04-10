@@ -562,7 +562,9 @@ export const getWorkerParameter = <T>(
   type: 'string' | 'number' | 'boolean' = 'string'
 ): T => {
   try {
-    const workerParameters = JSON.parse(worker.WorkerParameters);
+    const workerParameters = worker.WorkerParameters.startsWith('{')
+      ? JSON.parse(worker.WorkerParameters)
+      : {};
     const forkParameters = worker.BetId.startsWith('{')
       ? JSON.parse(worker.BetId)
       : {};
