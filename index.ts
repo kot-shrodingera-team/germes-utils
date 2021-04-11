@@ -566,10 +566,11 @@ export const getWorkerParameter = <T>(
       worker.WorkerParameters && worker.WorkerParameters.startsWith('{')
         ? JSON.parse(worker.WorkerParameters)
         : {};
-    const forkParameters =
+    const forkData =
       worker.BetId && worker.BetId.startsWith('{')
         ? JSON.parse(worker.BetId)
-        : {};
+        : null;
+    const forkParameters = forkData && forkData.workerParameters;
     const parameters = { ...workerParameters, ...forkParameters };
     if (!(key in parameters)) {
       return undefined;
