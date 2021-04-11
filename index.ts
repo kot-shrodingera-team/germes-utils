@@ -575,7 +575,7 @@ export const getWorkerParameter = <T>(
     if (!(key in parameters)) {
       return undefined;
     }
-    const value = workerParameters[key];
+    const value = parameters[key];
     if (typeof value !== type) {
       log(`Тип параметра ${key} не равен ${type}. Обратитесь в ТП`, 'crimson');
       return undefined;
