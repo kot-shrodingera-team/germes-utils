@@ -641,7 +641,9 @@ export const checkCouponLoadingError = async (
 
   if (options.informMessage) {
     worker.Helper.SendInformedMessage(
-      `В ${window.germesData.bookmakerName} произошла ошибка принятия ставки:\n${options.informMessage}\n`
+      `В ${window.germesData.bookmakerName} произошла ошибка принятия ставки:\n` +
+        `${options.informMessage}\n` +
+        `${stakeInfoString()}`
     );
   }
 
