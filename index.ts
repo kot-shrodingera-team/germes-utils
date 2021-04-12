@@ -649,6 +649,7 @@ export const checkCouponLoadingError = async (
 
   if (options.reopen) {
     try {
+      window.germesData.betProcessingStep = 'reopen';
       await options.reopen.openBet();
       log('Ставка успешно переоткрыта', 'green');
       window.germesData.betProcessingStep = 'reopened';
