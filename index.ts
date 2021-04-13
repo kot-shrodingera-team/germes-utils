@@ -703,9 +703,10 @@ export const text = (element: Element, short = false): string => {
   return trim(element.textContent, short);
 };
 
-interface MultiAwaiterData<T> {
-  [key: string]: Promise<T> | (() => Promise<T>);
-}
+export type MultiAwaiterData<T> = Record<
+  string,
+  Promise<T> | (() => Promise<T>)
+>;
 
 export const multiAwaiter = async <T>(
   promises: MultiAwaiterData<T>
