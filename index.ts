@@ -685,3 +685,43 @@ export const getRemainingTimeout = (maximum?: number): number => {
   }
   return result;
 };
+
+export const trim = (string: string, short = false): string => {
+  if (short) {
+    return string.trim();
+  }
+  return string
+    .replace(/(^[^\S\n]+|[^\S\n]+$)/gm, '') // удаление пробельных символов (кроме переносов) из начал и концов строк
+    .replace(/[^\S\n]+/g, ' ') // "сжимание" последовательностей пробельных символов (кроме переносов) до одного пробела
+    .replace(/\n+/g, '\n'); // "сжимание" последовтельностей переносов до одного переноса
+};
+
+export const text = (element: Element, short = false): string => {
+  if (!element) {
+    return undefined;
+  }
+  return trim(element.textContent, short);
+};
+
+interface MultiAwaiterData<T> {
+  [key: string]: Promise<T> | (() => Promise<T>);
+}
+
+export const multiAwaiter = async <T>(
+  promises: MultiAwaiterData<T>
+): Promise<{ result: T; key: string }> => {
+  let resultKey = null;
+  const flaggedPromises = Object.keys(promises).map(async (key) => {
+    const result =
+      typeof promises[key] === 'function'
+        ? await (promises[key] as () => Promise<T>)()
+        : await (promises[key] as Promise<T>);
+    resultKey = key;
+    return result;
+  });
+  const result = await Promise.race(flaggedPromises);
+  return {
+    result,
+    key: resultKey,
+  };
+};
