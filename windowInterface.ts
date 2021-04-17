@@ -1,6 +1,8 @@
 declare global {
   interface GermesData {
     bookmakerName: string;
+    minimumStake: number;
+    maximumStake: number;
     doStakeTime: Date;
     betProcessingStep: string;
     betProcessingAdditionalInfo: string;
