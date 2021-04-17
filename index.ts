@@ -701,6 +701,9 @@ export const text = (element: Element, short = false): string => {
   if (!element) {
     return undefined;
   }
+  if (element instanceof HTMLInputElement) {
+    return trim(element.value, short);
+  }
   return trim(element.textContent, short);
 };
 
