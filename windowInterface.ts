@@ -5,6 +5,8 @@ declare global {
     betProcessingStep: string;
     betProcessingAdditionalInfo: string;
     betProcessingTimeout: number;
+    stakeDisabled: boolean;
+    stopBetProcessing: () => void;
   }
 
   interface Window {
