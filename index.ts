@@ -774,3 +774,17 @@ export const multiAwaiter = async <T>(
     key: resultKey,
   };
 };
+
+export const sendTGBotMessage = (
+  token: string,
+  chatId: number,
+  message: string
+): Promise<Response> => {
+  return fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: `{"chat_id": "${chatId}","text": "${message}","disable_notification": false}`,
+  });
+};
