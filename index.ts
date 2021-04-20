@@ -780,7 +780,8 @@ export const sendTGBotMessage = (
   chatId: number,
   message: string
 ): Promise<Response> => {
-  return fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+  // eslint-disable-next-line no-useless-escape
+  return fetch(`https:\/\/api.telegram.org/bot${token}/sendMessage`, {
     method: 'post',
     headers: {
       'Content-Type': 'application/json',
