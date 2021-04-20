@@ -41,6 +41,50 @@ export const getElement = async <E extends Element = Element>(
   });
 };
 
+export const elementRemoved = async (
+  element: Element,
+  rejectTime = 5000,
+  context: Document | Element = document
+): Promise<boolean> => {
+  return new Promise((resolve /* , reject */) => {
+    let removed = false;
+    if (!element) {
+      removed = true;
+      resolve(removed);
+      return;
+    }
+    const observerConfig: MutationObserverInit = {
+      childList: true,
+      subtree: true,
+    };
+
+    const mutationObserver = new MutationObserver((mutations, observer) => {
+      if (
+        mutations.some((mutation) => {
+          return [...mutation.removedNodes].some((removedNode) => {
+            return removedNode.contains(element);
+          });
+        })
+      ) {
+        removed = true;
+        resolve(removed);
+        observer.disconnect();
+      }
+    });
+
+    if (rejectTime > 0) {
+      setTimeout(() => {
+        if (removed === false) {
+          resolve(removed);
+          mutationObserver.disconnect();
+        }
+      }, rejectTime);
+    }
+
+    mutationObserver.observe(context, observerConfig);
+  });
+};
+
 /**
  * Promise, который повторяет колбэк и резолвится, когда значение колбэка truthy
  * @param condition Колбэк, который выполняется
