@@ -44,7 +44,7 @@ export const getElement = async <E extends Element = Element>(
 export const elementRemoved = async (
   element: Element,
   rejectTime = 5000,
-  context: Document | Element = document
+  context: Document | Element = null
 ): Promise<boolean> => {
   return new Promise((resolve /* , reject */) => {
     let removed = false;
@@ -81,7 +81,7 @@ export const elementRemoved = async (
       }, rejectTime);
     }
 
-    mutationObserver.observe(context, observerConfig);
+    mutationObserver.observe(context || element.ownerDocument, observerConfig);
   });
 };
 
