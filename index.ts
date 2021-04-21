@@ -786,6 +786,9 @@ export const sendTGBotMessage = (
     headers: {
       'Content-Type': 'application/json',
     },
-    body: `{"chat_id": "${chatId}","text": "${message}","disable_notification": false}`,
+    body: `{"chat_id": "${chatId}","text": "${message.replace(
+      /"/g,
+      '\\"'
+    )}","disable_notification": false}`,
   });
 };
