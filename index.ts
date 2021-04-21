@@ -780,15 +780,17 @@ export const sendTGBotMessage = (
   chatId: number,
   message: string
 ): Promise<Response> => {
+  const timestamp = timeString(new Date());
+  const fullMessage =
+    `[${timestamp}]\n` +
+    `[${worker.ApiKey}/${window.germesData.bookmakerName}]\n` +
+    `${message.replace(/"/g, '\\"')}`;
   // eslint-disable-next-line no-useless-escape
   return fetch(`https:\/\/api.telegram.org/bot${token}/sendMessage`, {
     method: 'post',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: `{"chat_id": "${chatId}","text": "${message.replace(
-      /"/g,
-      '\\"'
-    )}","disable_notification": false}`,
+    body: `{"chat_id": "${chatId}","text": "${fullMessage}","disable_notification": false}`,
   });
 };
