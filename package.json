@@ -1,6 +1,6 @@
 {
   "name": "@kot-shrodingera-team/germes-utils",
-  "version": "1.0.50",
+  "version": "1.0.51",
   "devDependencies": {
     "@kot-shrodingera-team/eslint-config-germes": "^1.0.4",
     "@kot-shrodingera-team/prettier-config-germes": "^1.0.1",
