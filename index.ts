@@ -761,15 +761,26 @@ export const multiAwaiter = async <T>(
   promises: MultiAwaiterData<T>
 ): Promise<{ result: T; key: string }> => {
   let resultKey = null;
-  const flaggedPromises = Object.keys(promises).map(async (key) => {
+  let wasFirstResult = false;
+  const flaggedAsyncFunctions = Object.keys(promises).map((key) => async () => {
     const result =
       typeof promises[key] === 'function'
         ? await (promises[key] as () => Promise<T>)()
         : await (promises[key] as Promise<T>);
+    if (wasFirstResult === true) {
+      return undefined;
+    }
+    wasFirstResult = true;
+    if (result === null) {
+      resultKey = null;
+      return null;
+    }
     resultKey = key;
     return result;
   });
-  const result = await Promise.race(flaggedPromises);
+  const result = await Promise.race(
+    flaggedAsyncFunctions.map((func) => func())
+  );
   return {
     result,
     key: resultKey,
