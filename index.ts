@@ -555,8 +555,8 @@ export const nativeInput = (
 ): void => {
   const keyFunction =
     type === 'KeyDown'
-      ? Api.DomEventsHelper.KeyDown
-      : Api.DomEventsHelper.KeyPress;
+      ? worker.Api.DomEventsHelper.KeyDown
+      : worker.Api.DomEventsHelper.KeyPress;
   while (inputElement.value) {
     const oldValue = inputElement.value;
     keyFunction(8);
