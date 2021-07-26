@@ -806,3 +806,127 @@ export const sendTGBotMessage = (
     body: `{"chat_id": "${chatId}","text": "${fullMessage}","disable_notification": false}`,
   });
 };
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/naming-convention, no-underscore-dangle
+  const ___grecaptcha_cfg: {
+    clients: unknown;
+  };
+}
+interface RecaptchaClient {
+  id: string;
+  version: string;
+  pageurl: string;
+  sitekey: string;
+  callback: string;
+  function: (token: string) => unknown;
+}
+
+export const findRecaptchaClients = (): RecaptchaClient[] => {
+  // eslint-disable-next-line camelcase
+  if (typeof ___grecaptcha_cfg !== 'undefined') {
+    // eslint-disable-next-line camelcase, no-undef
+    return Object.entries(___grecaptcha_cfg.clients).map(([cid, client]) => {
+      const data = {
+        id: cid,
+        version: Number(cid) >= 10000 ? 'V3' : 'V2',
+        pageurl: undefined,
+        sitekey: undefined,
+        callback: undefined,
+        function: undefined,
+      } as RecaptchaClient;
+      const objects = Object.entries(client).filter(
+        ([, value]) => value && typeof value === 'object'
+      );
+
+      objects.forEach(([toplevelKey, toplevel]) => {
+        const found = Object.entries(toplevel).find(
+          ([, value]) =>
+            value &&
+            typeof value === 'object' &&
+            'sitekey' in value &&
+            'size' in value
+        );
+
+        if (
+          typeof toplevel === 'object' &&
+          toplevel instanceof HTMLElement &&
+          toplevel.tagName === 'DIV'
+        ) {
+          data.pageurl = toplevel.baseURI;
+        }
+
+        if (found) {
+          const [sublevelKey, sublevel] = found;
+
+          data.sitekey = sublevel.sitekey;
+          const callbackKey =
+            data.version === 'V2' ? 'callback' : 'promise-callback';
+          const callback = sublevel[callbackKey];
+          if (!callback) {
+            data.callback = null;
+            data.function = null;
+          } else {
+            data.function = callback;
+            const keys = [cid, toplevelKey, sublevelKey, callbackKey]
+              .map((key) => `['${key}']`)
+              .join('');
+            data.callback = `___grecaptcha_cfg.clients${keys}`;
+          }
+        }
+      });
+      return data;
+    });
+  }
+  return [];
+};
+
+export const resolveRecaptcha = async (): Promise<void> => {
+  const recaptchaClients = findRecaptchaClients();
+  if (recaptchaClients.length === 0) {
+    throw new Error('Не найден клиент капчи');
+  }
+  const recaptchaClient = recaptchaClients[0];
+  const rucapthcaInUrl = `https://rucaptcha.com/in.php?key=${
+    worker.RuCaptchaApiKey
+  }&method=userrecaptcha&googlekey=${
+    recaptchaClient.sitekey
+  }&pageurl=${encodeURIComponent(
+    recaptchaClient.pageurl
+  )}&header_acao=1&json=1`;
+  const rucapthcaInResponse = await (await fetch(rucapthcaInUrl)).json();
+  if (!('status' in rucapthcaInResponse)) {
+    throw new Error('no status in rucapthcaInResponse');
+  }
+  if (rucapthcaInResponse.status !== 1) {
+    throw new Error('rucapthcaInResponse status is not 1');
+  }
+  if (!('request' in rucapthcaInResponse)) {
+    throw new Error('no request in rucapthcaInResponse');
+  }
+  const rucaptchaRequestId = rucapthcaInResponse.request;
+  const rucapthcaResUrl = `https://rucaptcha.com/res.php?key=${worker.RuCaptchaApiKey}&action=get&id=${rucaptchaRequestId}&header_acao=1&json=1`;
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    // eslint-disable-next-line no-await-in-loop
+    const rucapthcaResResponse = await (await fetch(rucapthcaResUrl)).json();
+    if (!('status' in rucapthcaResResponse)) {
+      throw new Error('no status in rucapthcaResResponse');
+    }
+    if (rucapthcaResResponse.status === 0) {
+      log('Капча ещё не решена', 'steelblue');
+      // eslint-disable-next-line no-await-in-loop
+      await sleep(5000);
+    } else {
+      log('Капча решена', 'green');
+      if (rucapthcaResResponse.status !== 1) {
+        throw new Error('rucapthcaResResponse status is not 1');
+      }
+      if (!('request' in rucapthcaResResponse)) {
+        throw new Error('no request in rucapthcaResResponse');
+      }
+      const token = rucapthcaResResponse.request;
+      recaptchaClient.function(token);
+    }
+  }
+};
