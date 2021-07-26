@@ -927,6 +927,7 @@ export const resolveRecaptcha = async (): Promise<void> => {
       }
       const token = rucapthcaResResponse.request;
       recaptchaClient.function(token);
+      return;
     }
   }
 };
