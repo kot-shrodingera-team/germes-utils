@@ -9,6 +9,11 @@ declare global {
     betProcessingTimeout: number;
     stakeDisabled: boolean;
     stopBetProcessing: () => void;
+    // Для ручника
+    updateMaximumIntervalId: number;
+    updateCoefIntervalId: number;
+    manualMax: number;
+    manualCoef: number;
   }
 
   interface Window {
