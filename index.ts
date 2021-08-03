@@ -931,3 +931,15 @@ export const resolveRecaptcha = async (): Promise<void> => {
     }
   }
 };
+
+export const checkCurrency = (siteCurrency: string): void => {
+  if (siteCurrency === 'Unknown') {
+    return;
+  }
+  const botCurrency = worker.Currency;
+  if (siteCurrency !== botCurrency) {
+    throw new JsFailError(
+      `Не совпадают валюты в боте (${botCurrency}) и на сайте (${siteCurrency})`
+    );
+  }
+};
