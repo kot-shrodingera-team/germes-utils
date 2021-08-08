@@ -1,8 +1,7 @@
 import { multiAwaiter, MultiAwaiterData } from '.';
 
 export interface State {
-  entry?: () => Promise<void>;
-  final?: boolean;
+  entry: () => Promise<void>;
 }
 
 export class StateMachine {
@@ -10,9 +9,11 @@ export class StateMachine {
 
   state: string;
 
-  promises: MultiAwaiterData<any>;
+  promises: MultiAwaiterData<unknown>;
 
-  data: { result: any; key: string };
+  data: { result: unknown; key: string };
+
+  end: boolean;
 
   setStates = (states: Record<string, State>): void => {
     this.states = states;
@@ -27,7 +28,7 @@ export class StateMachine {
     if ('entry' in this.states[this.state]) {
       this.states[this.state].entry();
     }
-    if (!this.states[this.state].final) {
+    if (!this.end) {
       this.data = await multiAwaiter(this.promises);
       if (this.data.key === null) {
         await this.changeState('timeout');
