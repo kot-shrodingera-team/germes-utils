@@ -26,7 +26,7 @@ export class StateMachine {
     }
     this.state = newState;
     if ('entry' in this.states[this.state]) {
-      this.states[this.state].entry();
+      await this.states[this.state].entry();
     }
     if (!this.end) {
       this.data = await multiAwaiter(this.promises);
