@@ -11,6 +11,7 @@ declare global {
     stopBetProcessing: () => void;
     // Для ручника
     updateManualDataIntervalId: number;
+    stopUpdateManualData: boolean;
     manualMaximumStake: number;
     manualCoefficient: number;
     manualParameter: number;
