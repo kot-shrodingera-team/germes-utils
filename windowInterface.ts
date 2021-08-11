@@ -15,7 +15,7 @@ declare global {
     manualMaximumStake: number;
     manualCoefficient: number;
     manualParameter: number;
-    manualEnabled: number;
+    manualStakeEnabled: number;
   }
 
   interface Window {
