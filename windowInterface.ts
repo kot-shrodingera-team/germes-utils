@@ -10,10 +10,7 @@ declare global {
     stakeDisabled: boolean;
     stopBetProcessing: () => void;
     // Для ручника
-    updateMaximumStakeIntervalId: number;
-    updateCoefficientIntervalId: number;
-    updateParameterIntervalId: number;
-    updateEnabledIntervalId: number;
+    updateManualDataIntervalId: number;
     manualMaximumStake: number;
     manualCoefficient: number;
     manualParameter: number;
