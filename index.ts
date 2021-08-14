@@ -882,6 +882,9 @@ export const findRecaptchaClients = (): RecaptchaClient[] => {
 };
 
 export const resolveRecaptcha = async (): Promise<void> => {
+  if (!worker.RuCaptchaApiKey) {
+    log('Не указан ключ RuCaptcha. Невозможно решить капчу', 'crimson');
+  }
   const recaptchaClients = findRecaptchaClients();
   if (recaptchaClients.length === 0) {
     throw new Error('Не найден клиент капчи');
