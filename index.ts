@@ -819,11 +819,11 @@ interface RecaptchaClient {
 export const findRecaptchaClients = (
   context: Window = window
 ): RecaptchaClient[] => {
-  interface CaptchaWindow extends Window {
+  type CaptchaWindow = typeof window & {
     ___grecaptcha_cfg: {
       clients: unknown;
     };
-  }
+  };
   const $context = <CaptchaWindow>(context || window);
   // eslint-disable-next-line no-underscore-dangle
   if (typeof $context.___grecaptcha_cfg !== 'undefined') {
@@ -853,7 +853,7 @@ export const findRecaptchaClients = (
 
           if (
             typeof toplevel === 'object' &&
-            toplevel instanceof HTMLElement &&
+            toplevel instanceof $context.HTMLElement &&
             toplevel.tagName === 'DIV'
           ) {
             data.pageurl = toplevel.baseURI;
