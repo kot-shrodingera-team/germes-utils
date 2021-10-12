@@ -747,7 +747,7 @@ export const text = (element: Element, short = false): string => {
     return undefined;
   }
   if (element.constructor.name === 'HTMLInputElement') {
-    return trim((element as HTMLInputElement).value, short);
+    return trim((<HTMLInputElement>element).value, short);
   }
   return trim(element.textContent, short);
 };
@@ -807,12 +807,6 @@ export const sendTGBotMessage = (
   });
 };
 
-declare global {
-  // eslint-disable-next-line @typescript-eslint/naming-convention, no-underscore-dangle
-  const ___grecaptcha_cfg: {
-    clients: unknown;
-  };
-}
 interface RecaptchaClient {
   id: string;
   version: string;
@@ -822,70 +816,81 @@ interface RecaptchaClient {
   function: (token: string) => unknown;
 }
 
-export const findRecaptchaClients = (): RecaptchaClient[] => {
-  // eslint-disable-next-line camelcase
-  if (typeof ___grecaptcha_cfg !== 'undefined') {
-    // eslint-disable-next-line camelcase, no-undef
-    return Object.entries(___grecaptcha_cfg.clients).map(([cid, client]) => {
-      const data = {
-        id: cid,
-        version: Number(cid) >= 10000 ? 'V3' : 'V2',
-        pageurl: undefined,
-        sitekey: undefined,
-        callback: undefined,
-        function: undefined,
-      } as RecaptchaClient;
-      const objects = Object.entries(client).filter(
-        ([, value]) => value && typeof value === 'object'
-      );
-
-      objects.forEach(([toplevelKey, toplevel]) => {
-        const found = Object.entries(toplevel).find(
-          ([, value]) =>
-            value &&
-            typeof value === 'object' &&
-            'sitekey' in value &&
-            'size' in value
+export const findRecaptchaClients = (
+  context: Window = window
+): RecaptchaClient[] => {
+  interface CaptchaWindow extends Window {
+    ___grecaptcha_cfg: {
+      clients: unknown;
+    };
+  }
+  const $context = <CaptchaWindow>(context || window);
+  // eslint-disable-next-line no-underscore-dangle
+  if (typeof $context.___grecaptcha_cfg !== 'undefined') {
+    // eslint-disable-next-line no-underscore-dangle
+    return Object.entries($context.___grecaptcha_cfg.clients).map(
+      ([cid, client]) => {
+        const data = <RecaptchaClient>{
+          id: cid,
+          version: Number(cid) >= 10000 ? 'V3' : 'V2',
+          pageurl: undefined,
+          sitekey: undefined,
+          callback: undefined,
+          function: undefined,
+        };
+        const objects = Object.entries(client).filter(
+          ([, value]) => value && typeof value === 'object'
         );
 
-        if (
-          typeof toplevel === 'object' &&
-          toplevel instanceof HTMLElement &&
-          toplevel.tagName === 'DIV'
-        ) {
-          data.pageurl = toplevel.baseURI;
-        }
+        objects.forEach(([toplevelKey, toplevel]) => {
+          const found = Object.entries(toplevel).find(
+            ([, value]) =>
+              value &&
+              typeof value === 'object' &&
+              'sitekey' in value &&
+              'size' in value
+          );
 
-        if (found) {
-          const [sublevelKey, sublevel] = found;
-
-          data.sitekey = sublevel.sitekey;
-          const callbackKey =
-            data.version === 'V2' ? 'callback' : 'promise-callback';
-          const callback = sublevel[callbackKey];
-          if (!callback) {
-            data.callback = null;
-            data.function = null;
-          } else {
-            data.function = callback;
-            const keys = [cid, toplevelKey, sublevelKey, callbackKey]
-              .map((key) => `['${key}']`)
-              .join('');
-            data.callback = `___grecaptcha_cfg.clients${keys}`;
+          if (
+            typeof toplevel === 'object' &&
+            toplevel instanceof HTMLElement &&
+            toplevel.tagName === 'DIV'
+          ) {
+            data.pageurl = toplevel.baseURI;
           }
-        }
-      });
-      return data;
-    });
+
+          if (found) {
+            const [sublevelKey, sublevel] = found;
+
+            data.sitekey = sublevel.sitekey;
+            const callbackKey =
+              data.version === 'V2' ? 'callback' : 'promise-callback';
+            const callback = sublevel[callbackKey];
+            if (!callback) {
+              data.callback = null;
+              data.function = null;
+            } else {
+              data.function = callback;
+              const keys = [cid, toplevelKey, sublevelKey, callbackKey]
+                .map((key) => `['${key}']`)
+                .join('');
+              data.callback = `___grecaptcha_cfg.clients${keys}`;
+            }
+          }
+        });
+        return data;
+      }
+    );
   }
   return [];
 };
 
-export const resolveRecaptcha = async (): Promise<void> => {
+export const resolveRecaptcha = async (context: Window): Promise<void> => {
+  const $context = context || window;
   if (!worker.RuCaptchaApiKey) {
-    log('Не указан ключ RuCaptcha. Невозможно решить капчу', 'crimson');
+    throw new Error('Не указан ключ RuCaptcha. Невозможно решить капчу');
   }
-  const recaptchaClients = findRecaptchaClients();
+  const recaptchaClients = findRecaptchaClients($context);
   if (recaptchaClients.length === 0) {
     throw new Error('Не найден клиент капчи');
   }
