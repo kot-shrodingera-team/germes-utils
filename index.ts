@@ -951,3 +951,15 @@ export const checkCurrency = (siteCurrency: string): void => {
     );
   }
 };
+
+export const comparePrimitiveArrays = (
+  leftArray: any[],
+  rightArray: any[]
+): boolean => {
+  return (
+    Array.isArray(leftArray) &&
+    Array.isArray(rightArray) &&
+    leftArray.length === rightArray.length &&
+    leftArray.every((value, index) => value === rightArray[index])
+  );
+};
