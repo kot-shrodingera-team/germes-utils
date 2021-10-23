@@ -669,55 +669,6 @@ export const repeatingOpenBet = async (
   }
 };
 
-interface CheckCouponLoadingErrorOptions {
-  botMessage?: string;
-  informMessage?: string;
-  reopen?: {
-    openBet: () => Promise<void>;
-  };
-}
-
-export const checkCouponLoadingError = async (
-  options: CheckCouponLoadingErrorOptions
-): Promise<void> => {
-  if (options.botMessage) {
-    log(options.botMessage, 'crimson');
-  }
-
-  if (options.informMessage) {
-    worker.Helper.SendInformedMessage(
-      `В ${window.germesData.bookmakerName} произошла ошибка принятия ставки:\n` +
-        `${options.informMessage}\n` +
-        `${stakeInfoString()}`
-    );
-  }
-
-  if (options.reopen) {
-    try {
-      window.germesData.betProcessingStep = 'reopen';
-      await options.reopen.openBet();
-      log('Ставка успешно переоткрыта', 'green');
-      window.germesData.betProcessingStep = 'reopened';
-    } catch (reopenError) {
-      if (reopenError instanceof JsFailError) {
-        log(reopenError.message, 'red');
-      } else {
-        log(reopenError.message, 'red');
-      }
-    }
-  }
-
-  window.germesData.betProcessingStep = 'error';
-};
-
-export const checkCouponLoadingSuccess = (message?: string): void => {
-  if (message !== undefined) {
-    log(message, 'steelblue');
-  }
-
-  window.germesData.betProcessingStep = 'success';
-};
-
 export const getRemainingTimeout = (maximum?: number): number => {
   const result =
     window.germesData.betProcessingTimeout -
@@ -953,8 +904,8 @@ export const checkCurrency = (siteCurrency: string): void => {
 };
 
 export const comparePrimitiveArrays = (
-  leftArray: any[],
-  rightArray: any[]
+  leftArray: unknown[],
+  rightArray: unknown[]
 ): boolean => {
   return (
     Array.isArray(leftArray) &&
