@@ -1,4 +1,4 @@
-import { log } from '.';
+import { log, stakeInfoString } from '.';
 import { JsFailError } from './errors';
 import { StateMachine } from './stateMachine';
 
@@ -32,4 +32,12 @@ export const reopenBet = async (
     }
     window.germesData.betProcessingStep = 'error';
   }
+};
+
+export const sendErrorMessage = (message: string): void => {
+  worker.Helper.SendInformedMessage(
+    `В ${window.germesData.bookmakerName} произошла ошибка принятия ставки:\n` +
+      `${message}\n` +
+      `${stakeInfoString()}`
+  );
 };
