@@ -604,16 +604,17 @@ export const getWorkerParameter = <T>(
   type: 'string' | 'number' | 'boolean' = 'boolean'
 ): T => {
   try {
-    const workerParameters =
-      worker.WorkerParameters && worker.WorkerParameters.startsWith('{')
-        ? JSON.parse(worker.WorkerParameters)
+    const BookmakerAdditionalOptions =
+      worker.BookmakerAdditionalOptions &&
+      worker.BookmakerAdditionalOptions.startsWith('{')
+        ? JSON.parse(worker.BookmakerAdditionalOptions)
         : {};
     const forkData =
       worker.BetId && worker.BetId.startsWith('{')
         ? JSON.parse(worker.BetId)
         : null;
-    const forkParameters = forkData && forkData.workerParameters;
-    const parameters = { ...workerParameters, ...forkParameters };
+    const forkParameters = forkData && forkData.BookmakerAdditionalOptions;
+    const parameters = { ...BookmakerAdditionalOptions, ...forkParameters };
     if (!(key in parameters)) {
       return undefined;
     }
