@@ -6,18 +6,17 @@ export const betProcessingError = async (
   machine: StateMachine
 ): Promise<void> => {
   window.germesData.betProcessingStep = 'error';
-  // eslint-disable-next-line no-param-reassign
-  machine.end = true;
+  machine.stop();
 };
 
 export const betProcessingCompltete = (machine: StateMachine): void => {
   window.germesData.betProcessingStep = 'success';
-  // eslint-disable-next-line no-param-reassign
-  machine.end = true;
+  machine.stop();
 };
 
 export const reopenBet = async (
-  openBet: () => Promise<void>
+  openBet: () => Promise<void>,
+  machine: StateMachine
 ): Promise<void> => {
   try {
     window.germesData.betProcessingStep = 'reopen';
@@ -32,6 +31,7 @@ export const reopenBet = async (
     }
     window.germesData.betProcessingStep = 'error';
   }
+  machine.stop();
 };
 
 export const sendErrorMessage = (message: string): void => {

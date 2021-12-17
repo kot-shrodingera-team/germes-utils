@@ -41,4 +41,8 @@ export class StateMachine {
   start = async (initialState: string): Promise<void> => {
     await this.changeState(initialState);
   };
+
+  stop = (): void => {
+    this.end = true;
+  };
 }
