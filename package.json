@@ -1,6 +1,6 @@
 {
   "name": "@kot-shrodingera-team/germes-utils",
-  "version": "1.0.72",
+  "version": "1.0.73",
   "devDependencies": {
     "@kot-shrodingera-team/worker-declaration": "1.0.14",
     "@typescript-eslint/eslint-plugin": "4.26.0",
