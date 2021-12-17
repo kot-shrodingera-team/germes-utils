@@ -391,14 +391,11 @@ export const log = (message: string, color = 'white', dev = false): void => {
  * Формарование строки с информацией о ставке (событие, роспись, сумма, коэффициент)
  * @returns Итоговая строка
  */
-export const stakeInfoString = (): string => {
-  return (
-    `Событие: ${worker.TeamOne} vs ${worker.TeamTwo}\n` +
-    `Ставка: ${worker.BetName}\n` +
-    `Сумма: ${worker.StakeInfo.Summ}\n` +
-    `Коэффициент: ${worker.StakeInfo.Coef}`
-  );
-};
+export const stakeInfoString = (): string =>
+  `Событие: ${worker.TeamOne} vs ${worker.TeamTwo}\n` +
+  `Ставка: ${worker.BetName}\n` +
+  `Сумма: ${worker.StakeInfo.Summ}\n` +
+  `Коэффициент: ${worker.StakeInfo.Coef}`;
 
 // https://en.wikipedia.org/wiki/List_of_mobile_telephone_prefixes_by_country
 /**

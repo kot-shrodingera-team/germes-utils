@@ -34,7 +34,7 @@ export const setReactInputValue = (
  */
 export const getReactInstance = (element: Element): unknown => {
   if (element) {
-    return ((element as unknown) as Record<string, unknown>)[
+    return (<Record<string, unknown>>(<unknown>element))[
       Object.keys(element).find((key) =>
         key.startsWith('__reactInternalInstance')
       )
@@ -50,7 +50,7 @@ export const getReactInstance = (element: Element): unknown => {
  */
 export const getReactEventHandlers = (element: Element): unknown => {
   if (element) {
-    return ((element as unknown) as Record<string, unknown>)[
+    return (<Record<string, unknown>>(<unknown>element))[
       Object.keys(element).find((key) => key.startsWith('__reactEventHandlers'))
     ];
   }
