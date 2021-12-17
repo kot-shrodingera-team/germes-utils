@@ -1,6 +1,6 @@
 {
   "name": "@kot-shrodingera-team/germes-utils",
-  "version": "1.0.73",
+  "version": "1.0.74",
   "dependencies": {
     "@kot-shrodingera-team/worker-declaration": "1.0.16"
   },
